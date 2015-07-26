@@ -1,0 +1,44 @@
+{
+  "name": "react-async-loader",
+  "version": "0.0.1",
+  "description": "Async script loading composition",
+  "main": "modules/AsyncLoader.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "example": "./scripts/runExample.sh",
+    "build": "./scripts/build.sh",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EdStudio/react-async-loader.git"
+  },
+  "keywords": [
+    "React",
+    "Async",
+    "Script Loader"
+  ],
+  "author": "Edmund Hung <edmund@edstud.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EdStudio/react-async-loader/issues"
+  },
+  "homepage": "https://github.com/EdStudio/react-async-loader",
+  "peerDependencies": {
+    "react": ">=0.13"
+  },
+  "devDependencies": {
+    "babel": "^5.6.23",
+    "babel-core": "^5.7.4",
+    "babel-eslint": "^4.0.0",
+    "babel-loader": "^5.3.2",
+    "eslint": "^0.24.1",
+    "eslint-plugin-react": "^3.0.0",
+    "node-libs-browser": "^0.5.2",
+    "react-hot-loader": "^1.2.8",
+    "webpack": "^1.10.5",
+    "webpack-dev-server": "^1.10.1"
+  }
+}
