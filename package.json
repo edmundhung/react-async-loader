@@ -1,6 +1,6 @@
 {
   "name": "react-async-loader",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Async script loading composition",
   "main": "modules/AsyncLoader.js",
   "directories": {
@@ -40,5 +40,8 @@
     "react-hot-loader": "^1.2.8",
     "webpack": "^1.10.5",
     "webpack-dev-server": "^1.10.1"
+  },
+  "dependencies": {
+    "hoist-non-react-statics": "^1.0.3"
   }
 }

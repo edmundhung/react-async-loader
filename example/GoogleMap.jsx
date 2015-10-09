@@ -36,9 +36,11 @@ class GoogleMap extends React.Component {
 
 }
 
-export default asyncLoading(GoogleMap, [{
+const scripts = [{
   globalName: 'google.maps',
   scriptUrl: 'https://maps.googleapis.com/maps/api/js?v=3.exp',
   injectedAs: 'gmap',
   jsonp: true
-}], ['sampleExposeFunction']);
+}];
+
+export default asyncLoading(scripts)(GoogleMap);

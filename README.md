@@ -25,13 +25,12 @@ var asyncLoading = require('react-async-loader');
 ```
 
 
-The only API `asyncLoading(Component, dependencies, exposeStatics)` receives 3 parameters.
+The only API `asyncLoading(dependencies) => AsyncLoaded(Component)` receives 1 parameter and returns a function to connect with your Component.
 
-1. Component (React Component) - The component being wrapped
-2. dependencies (Array of Object) - Information about the script that are required to be injected into the component
-3. expoxeStatics (Array of String) - The name of static functions from the component that need to be exposed
+* dependencies (Array of Object) - Information about the script that are required to be injected into the component
+* Component (React Component) - The component being wrapped
 
-Dependency information
+Dependency Object
 - globalName: The script name to be injected from the global scope (window).
 - scriptUrl: The url of the script, exclude callback parameter for jsonp.
 - injectedAs: The name that will be used when injecting the loaded script.

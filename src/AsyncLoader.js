@@ -1,50 +1,54 @@
 import React from 'react';
+import hoistStatics from 'hoist-non-react-statics';
 
-var asyncLoading = function (Component, dependencies, exposeStatics = []) {
+function getDisplayName(Component) {
+  return Component.displayName || Component.name || 'Component';
+}
 
-  function getScript (globalName) {
-    var root = window,
-        globalPaths = globalName.split('.');
+function getScript (globalName) {
+  const root = window;
+  const globalPaths = globalName.split('.');
 
-    for (var i = 0; i < globalPaths.length; i++) {
-      const path = globalPaths[i],
-            prop = root[path];
+  for (var i = 0; i < globalPaths.length; i++) {
+    const path = globalPaths[i];
+    const prop = root[path];
 
-      if (typeof prop === 'undefined') {
-        return null;
+    if (typeof prop === 'undefined') {
+      return null;
+    }
+
+    root = prop;
+  }
+
+  return root;
+}
+
+function getScriptLoader (dep, callback) {
+  const { globalName, scriptUrl, jsonp } = dep;
+
+  let scriptLoader = document.createElement('script');
+
+  if (jsonp) {
+    let callbackName = `_async_${globalName.replace('.', '_')}`;
+    scriptUrl = `${scriptUrl}${scriptUrl.indexOf('?') > -1 ? '&' : '?'}callback=${callbackName}`;
+
+    window[callbackName] = callback;
+  } else {
+    scriptLoader.onload = callback;
+    scriptLoader.onreadystatechange = () => {
+      if (this.readyState === 'loaded') {
+        window.setTimeout(scriptLoader.onload, 0);
       }
-
-      root = prop;
-    }
-
-    return root;
+    };
   }
 
-  function getScriptLoader (dep, callback) {
-    var { globalName, scriptUrl, jsonp } = dep;
+  scriptLoader.async = 1;
+  scriptLoader.src = scriptUrl;
 
-    let scriptLoader = document.createElement('script');
+  return scriptLoader;
+}
 
-    if (jsonp) {
-      let callbackName = 'async_' + globalName.replace('.', '_'),
-          symbol = scriptUrl.indexOf('?') > -1 ? '&' : '?';
-
-      scriptUrl = `${scriptUrl}${symbol}callback=${callbackName}`;
-      window[callbackName] = callback;
-    } else {
-      scriptLoader.onload = callback;
-      scriptLoader.onreadystatechange = () => {
-        if (this.readyState === 'loaded') {
-          window.setTimeout(scriptLoader.onload, 0);
-        }
-      };
-    }
-
-    scriptLoader.async = 1;
-    scriptLoader.src = scriptUrl;
-
-    return scriptLoader;
-  }
+var asyncLoading = function (dependencies) {
 
   function getInitialState () {
     let state = {};
@@ -56,53 +60,47 @@ var asyncLoading = function (Component, dependencies, exposeStatics = []) {
     return state;
   }
 
-  class AsyncLoader extends React.Component {
+  return function (Component) {
 
-    displayName = 'AsyncLoader';
+    class AsyncLoaded extends React.Component {
 
-    state = getInitialState();
+      displayName = `AsyncLoaded(${getDisplayName(Component)})`;
 
-    componentDidMount () {
-      dependencies.forEach((dep) => {
-        if (this.state[dep.injectedAs] === null) {
-          var scriptLoader = getScriptLoader(dep, () => {
-            this.loadHandler(dep);
-          });
+      state = getInitialState();
 
-          document.body.appendChild(scriptLoader);
-        }
-      });
-    }
-
-    loadHandler = (dep) => {
-      const { globalName, injectedAs } = dep;
-
-      var script = getScript(globalName);
-
-      if (script !== null) {
-        var scriptLoaded = {};
-        scriptLoaded[injectedAs] = script;
-
-        this.setState(scriptLoaded);
+      componentDidMount () {
+        dependencies
+          .filter(dep => this.state[dep.injectedAs] === null)
+          .map(dep => getScriptLoader(dep, () => { this.loadHandler(dep); }))
+          .forEach(document.body.appendChild);
       }
+
+      loadHandler (dep) {
+        const { globalName, injectedAs } = dep;
+
+        let script = getScript(globalName);
+
+        if (script !== null) {
+          this.setState({ [injectedAs]: script });
+        }
+      }
+
+      injectScripts (component) {
+        return React.cloneElement(
+          React.createElement(component, this.props),
+          this.state
+        );
+      }
+
+      render () {
+        return this.injectScripts(Component);
+      }
+
     }
 
-    injectScripts = (component) => {
-      var element = React.createElement(component, this.props);
-      return React.cloneElement(element, this.state);
-    }
+    return hoistStatics(AsyncLoaded, Component);
 
-    render () {
-      return this.injectScripts(Component);
-    }
-
-  }
-
-  exposeStatics.forEach((fn) => {
-    AsyncLoader[fn] = Component[fn];
-  });
-
-  return AsyncLoader;
+  };
 
 };
 
