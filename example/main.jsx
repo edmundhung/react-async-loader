@@ -1,6 +1,6 @@
 import React from 'react';
 import GoogleMap from './GoogleMap';
 
-GoogleMap.sampleExposeFunction();
+GoogleMap.sampleStaticFunction();
 
 React.render(<GoogleMap />, document.getElementById('main'));
