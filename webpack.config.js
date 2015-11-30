@@ -1,7 +1,7 @@
 var webpack = require('webpack');
 
 module.exports = {
-  entry: './src/AsyncLoader',
+  entry: './src/AsyncLoad',
   module: {
     loaders: [
       { test: /\.js$/, loader: 'babel', exclude: /node_modules/ }
@@ -16,7 +16,7 @@ module.exports = {
     }
   }],
   output: {
-    filename: 'dist/ReactAsyncLoader.min.js',
+    filename: 'dist/ReactAsyncLoad.min.js',
     libraryTarget: 'umd',
     library: 'ReactAsyncLoader'
   },
