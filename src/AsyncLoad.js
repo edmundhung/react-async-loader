@@ -6,8 +6,13 @@ function getDisplayName(Component) {
 }
 
 function getScript (globalPath) {
+
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
   const paths = globalPath.split('.');
-  let root = window || {};
+  let root = window;
 
   for (var i = 0; i < paths.length; i++) {
     const path = paths[i];
@@ -74,29 +79,37 @@ var asyncLoad = function (mapScriptsToProps) {
 
       state = getInitialState(this.props);
 
-      loadScripts (props) {
-        const dependencies = mapScriptsToProps(props);
-
-        Object.keys(dependencies)
+      loadScripts (dependencies) {
+        return Object.keys(dependencies)
           .filter(name => this.state[name] === null)
           .map(name => {
             const dep = dependencies[name];
             return getScriptLoader(dep, this.loadHandler.bind(this, name, dep.globalPath));
           })
-          .forEach(scriptLoader => document ? document.body.appendChild(scriptLoader) : null);
+          .map(scriptLoader => {
+            if (typeof document !== 'undefined') {
+              document.body.appendChild(scriptLoader);
+            }
+          });
       }
 
       componentDidMount () {
-        this.loadScripts(this.props);
+        this.loadScripts(mapScriptsToProps(this.props));
       }
 
-      componentWillReceiveProps (nextProps) {
-        this.setState(getInitialState(nextProps));
-      }
+      /**
+       * Support again in the next version
+       */
 
-      componentDidUpdate (nextProps) {
-        this.loadScripts(nextProps);
-      }
+      // componentWillReceiveProps (nextProps) {
+      //   this.setState(getInitialState(nextProps));
+      // }
+      //
+      // componentDidUpdate (nextProps) {
+      //   const dependencies = mapScriptsToProps(nextProps);
+      //
+      //   this.loadScripts(dependencies);
+      // }
 
       loadHandler (name, globalPath) {
         let script = getScript(globalPath);
