@@ -35,6 +35,7 @@ Config Object
 - globalPath: The script name to be injected from the global scope (window). E.g. google.maps
 - url: The url of the script, exclude callback parameter for jsonp.
 - jsonp: Optional. Append callback parameter to scriptUrl when true.
+- callbackName: Optional. Added for Facebook SDK.
 
 Example
 -------

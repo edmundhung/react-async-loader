@@ -38,7 +38,7 @@ function getScriptLoader (dep, callback) {
   let scriptLoader = document.createElement('script');
 
   if (jsonp) {
-    let callbackName = `_async_${globalPath.replace('.', '_')}`;
+    const { callbackName = `_async_${globalPath.replace('.', '_')}` } = dep;
     url = `${url}${url.indexOf('?') > -1 ? '&' : '?'}callback=${callbackName}`;
 
     window[callbackName] = callback;
