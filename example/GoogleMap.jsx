@@ -1,12 +1,12 @@
-import React from 'react';
-import asyncLoading from '../src/AsyncLoader';
+import React, { Component } from 'react';
+import asyncLoading from '../src/AsyncLoad';
 
-class GoogleMap extends React.Component {
+class GoogleMap extends Component {
 
   state = { map: null }
 
-  static sampleExposeFunction () {
-    console.info('Function called');
+  static sampleStaticFunction () {
+    console.info('Static Function called');
   }
 
   initialize (canvas) {
@@ -36,11 +36,14 @@ class GoogleMap extends React.Component {
 
 }
 
-const scripts = [{
-  globalName: 'google.maps',
-  scriptUrl: 'https://maps.googleapis.com/maps/api/js?v=3.exp',
-  injectedAs: 'gmap',
-  jsonp: true
-}];
+function mapScriptsToProps (ownProps) {
+  return {
+    gmap: {
+      globalPath: 'google.maps',
+      url: 'https://maps.googleapis.com/maps/api/js?v=3.exp',
+      jsonp: true
+    }
+  };
+}
 
-export default asyncLoading(scripts)(GoogleMap);
+export default asyncLoading(mapScriptsToProps)(GoogleMap);
