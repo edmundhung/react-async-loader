@@ -7,8 +7,11 @@
     "example": "example"
   },
   "scripts": {
-    "example": "./scripts/runExample.sh",
-    "build": "./scripts/build.sh",
+    "build:commonjs": "babel src --out-dir modules",
+    "build:umd": "NODE_ENV=development webpack src/index.js dist/react-async-loader.js",
+    "build:umd:min": "NODE_ENV=production webpack src/index.js dist/react-async-loader.min.js",
+    "build": "npm run build:commonjs && npm run build:umd && npm run build:umd:min",
+    "example": "webpack-dev-server --config webpack-example.config.js",
     "prepublish": "npm run build"
   },
   "repository": {
